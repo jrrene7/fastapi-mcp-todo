@@ -80,11 +80,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="ToDo API", lifespan=lifespan)
 
-# --- MCP server (exposes selected FastAPI operations as tools) ---
-# Only expose the ToDo CRUD endpoints as MCP tools.
-mcp = FastApiMCP(app, include_tags=["todos"])
-mcp.mount()
-
 
 # --- CRUD endpoints ---
 
@@ -177,4 +172,22 @@ def delete_todo_by_id(todo_id: int, db: Session = Depends(get_db)):
 
 @app.get("/")
 def root():
-    return {"message": "ToDo API", "docs": "/docs"}
+    return {
+        "message": "ToDo API",
+        "docs": "/docs",
+        "health": "/healthz",
+        "mcp_http": "/mcp",
+        "mcp_sse": "/sse",
+    }
+
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+
+# --- MCP server (exposes selected FastAPI operations as tools) ---
+# Build the MCP server after registering the tagged routes it should expose.
+mcp = FastApiMCP(app, include_tags=["todos"])
+mcp.mount_http()
+mcp.mount_sse(mount_path="/sse")

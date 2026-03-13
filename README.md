@@ -12,7 +12,9 @@ uvicorn main:app --reload
 ```
 
 - Swagger UI: `http://127.0.0.1:8000/docs`
-- MCP endpoint: `http://127.0.0.1:8000/mcp`
+- Health endpoint: `http://127.0.0.1:8000/healthz`
+- MCP HTTP endpoint: `http://127.0.0.1:8000/mcp`
+- MCP SSE endpoint: `http://127.0.0.1:8000/sse`
 
 ## API
 
